@@ -22,6 +22,8 @@ export const GET_PRODUCT_LIST_URL = (size, page, search) =>
 // product add
 export const ADD_PRODUCT_URL = () => UrlParamsReplace('admin/add-new-product', {});
 
+export const DELETE_PRODUCT_URL = (productId) => UrlParamsReplace('admin/delete-new-product/:productId', { productId });
+
 // #############################################################################################################################
 
 // ############################################################# Categories ##########################################################

@@ -16,6 +16,8 @@ import { CircularProgress, TablePagination } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AnqTableSearchWithDebuger from 'src/components/comman/Search/AnqTableSearchWithDebuger';
 import CommonDeleteModel from '../CommonDeleteModel';
+import { PAnotifyError, PAnotifySuccess } from 'src/utils/tostMessage';
+import { ToastContainer } from 'react-toastify';
 //
 const RootTableWraper = styled('div')(({ theme }) => ({
   '& .MuiPaper-root': {
@@ -33,6 +35,7 @@ class PADataTable extends React.Component {
       updateValue: null,
       selectedobjRow: {},
     };
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
   customBodyRenderOfAction = (action, value, tableMeta, updateValue) => {
@@ -91,8 +94,8 @@ class PADataTable extends React.Component {
           <DeleteOutlineOutlinedIcon
             className={classes.icons}
             onClick={() => {
-              action.delete(objRow);
-              // this.setState({ openDelete: true, selectedobjRow: objRow });
+              // action.delete(objRow);
+              this.setState({ openDelete: true, selectedobjRow: objRow });
             }}
           />
         )}
@@ -139,6 +142,17 @@ class PADataTable extends React.Component {
     this.props.setObjPagination({ ...this.props.objPagination, page: 0, size: parseInt(event.target.value, 10) });
   };
 
+  handleDelete = async (dataObj) => {
+    var result = await this.props.action.delete(dataObj.id);
+    if (result.data.success == 'true') {
+      PAnotifySuccess(result.data.message);
+      this.setState({ openDelete: false, selectedobjRow: {} });
+      this.props.onLoad();
+    } else {
+      PAnotifyError(result.data.message);
+    }
+  };
+
   render() {
     console.log(this.props.objPagination, 'this.props.objPagination');
     return (
@@ -172,17 +186,12 @@ class PADataTable extends React.Component {
             onRowsPerPageChange={this.handleChangeRowsPerPage}
           />
         )}
-        {this.props.openDeleteModal && (
-          <CommonDeleteModel
-            open={this.props.openDeleteModal}
-            handleClose={() => this.props.setOpenDeleteModal(false)}
-            onSubmit={this.props.action ? this.props.action.delete : this.props.action}
-            tableMeta={this.state.tableMeta}
-            updateValue={this.state.updateValue}
-            value={this.state.value}
-            selectedobjRow={this.state.selectedobjRow}
-          />
-        )}
+        <CommonDeleteModel
+          open={this.state.openDelete}
+          handleClose={() => this.setState({ openDelete: false, selectedobjRow: {} })}
+          selectedobjRow={this.state.selectedobjRow}
+          onSubmit={this.handleDelete}
+        />
       </>
     );
   }

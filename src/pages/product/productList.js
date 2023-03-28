@@ -16,6 +16,8 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { dispatch } from 'src/redux/store';
 import { get_product_list_slice } from 'src/redux/slices/ecom_product';
+import { delete_product_service } from 'services/ecom_product.service';
+import { ToastContainer } from 'react-toastify';
 
 // ----------------------------------------------------------------------
 
@@ -48,6 +50,7 @@ export default function productList() {
   const [isPagination, setIsPagination] = useState(false);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
   const [objPagination, setObjPagination] = useState({
     size: 5,
@@ -102,6 +105,11 @@ export default function productList() {
     console.log(currency, 'currency');
   };
 
+  const handleDeleteProduct = async (id) => {
+    let res = await delete_product_service(id);
+    return res;
+  };
+
   return (
     <Page title="Product List | BULK SMS PLANS">
       <Container maxWidth={themeStretch ? false : 'lg'}>
@@ -146,13 +154,24 @@ export default function productList() {
             objPagination={objPagination}
             onSearch={onSearch}
             loading={isLoading}
+            setOpenDeleteModal={setOpenDeleteModal}
+            openDeleteModal={openDeleteModal}
+            deleteApiUrl="/admin/delete-new-product"
+            onLoad={onLoad}
             action={{
-              delete: (rowData) => {
-                console.log(rowData, 'Call delete');
-              },
+              delete: (id) => handleDeleteProduct(id),
             }}
           />
         </Card>
+        <ToastContainer
+          position="top-right"
+          hideProgressBar={false}
+          autoClose={false}
+          newestOnTop={true}
+          closeOnClick={false}
+          draggable={false}
+          rtl={false}
+        />
       </Container>
     </Page>
   );
