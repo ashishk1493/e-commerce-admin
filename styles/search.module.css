@@ -1,0 +1,26 @@
+.root{
+  display: flex;
+  align-items: center;
+  border: 1px solid grey;
+  border-radius: 5px;
+}
+.make-styles-search-60{
+  width: 602px;
+}
+.search{
+  flex-grow: 1;
+  height: 50px;
+  padding: 0px 16px;
+  display: flex;
+  align-items: center;
+  /* border: 1px solid grey */
+};
+.search-icon{
+  margin-right: 16px;
+};
+.search-input{
+  flex-grow: 1;
+};
+.search-button{
+  margin-left: 16px
+}

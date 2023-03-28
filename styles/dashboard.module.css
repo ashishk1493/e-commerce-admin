@@ -1,0 +1,12 @@
+.infoCard {
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.alertCard {
+  padding: 10px;
+}
+
+.alert {
+  margin: 10px 0px;
+}

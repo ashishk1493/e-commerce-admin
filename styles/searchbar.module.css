@@ -1,0 +1,57 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 10px 15px 10px 15px;
+  border-radius: 10px 10px 0px 0px;
+  background-color: white
+}
+
+.search {
+  flex-grow: 1;
+  width: 100%;
+  flex-basis: 480;
+}
+
+.add-button {
+  padding-right: 15px;
+  padding: 8px;
+  min-width: 84px
+}
+
+.filter-icon {
+  margin-right: 8px;
+}
+
+.actionroot {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.selectroot {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.select {
+  padding: 6px;
+  min-height: 0px;
+}
+
+.dropCsvFile {
+  height: 50px;
+  width: 100%;
+  border: 1px dashed #80808082;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.uploadFileText1 {
+  font-size: 14px;
+  font-weight: 400
+}
