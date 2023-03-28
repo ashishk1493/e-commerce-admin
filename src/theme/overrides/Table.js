@@ -14,6 +14,13 @@ export default function Table(theme) {
         },
       },
     },
+    MuiTableHead: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#8080805c',
+        },
+      },
+    },
     MuiTableCell: {
       styleOverrides: {
         root: {
@@ -22,7 +29,7 @@ export default function Table(theme) {
         head: {
           color: theme.palette.text.secondary,
           // backgroundColor: theme.palette.background.neutral,
-          backgroundColor: "#8080800a",
+          backgroundColor: '#8080800a',
           '&:first-of-type': {
             paddingLeft: theme.spacing(3),
             borderTopLeftRadius: theme.shape.borderRadius,
@@ -38,7 +45,7 @@ export default function Table(theme) {
         },
         stickyHeader: {
           // backgroundColor: theme.palette.background.paper,
-          backgroundColor: "#8080800a",
+          backgroundColor: '#8080800a',
           backgroundImage: `linear-gradient(to bottom, ${theme.palette.background.neutral} 0%, ${theme.palette.background.neutral} 100%)`,
         },
         body: {

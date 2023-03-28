@@ -77,8 +77,8 @@ export default function productList() {
 
   useEffect(() => {
     onLoad();
-  }, [dispatch, objPagination.size, objPagination.page, objPagination.search]);
-  // }, [dispatch, objPagination.count, objPagination.size, objPagination.page, objPagination.search])
+    // }, [dispatch, objPagination.size, objPagination.page, objPagination.search]);
+  }, [dispatch, objPagination.count, objPagination.size, objPagination.page, objPagination.search]);
 
   const onSearch = (value) => {
     setObjPagination({ ...objPagination, search: value, page: 0 });

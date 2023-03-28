@@ -39,11 +39,11 @@ import { useRouter } from 'next/router';
 
 // sections
 import {
-    AccountGeneral,
-    AccountBilling,
-    AccountSocialLinks,
-    AccountNotifications,
-    AccountChangePassword,
+  AccountGeneral,
+  AccountBilling,
+  AccountSocialLinks,
+  AccountNotifications,
+  AccountChangePassword,
 } from '../../sections/@dashboard/user/account';
 import FormCover from 'src/components/comman/FormCover';
 import AnqAutocomplete from '../../components/comman/FormImputs/AnqAutocomplete';
@@ -63,138 +63,132 @@ import EcomCategoryAdd from 'src/components/Bulk/EcomCategoryAdd';
 // ----------------------------------------------------------------------
 
 addProduct.getLayout = function getLayout(page) {
-    return <Layout>{page}</Layout>;
+  return <Layout>{page}</Layout>;
 };
 
 // ----------------------------------------------------------------------
 
 const top100Films = [
-    { label: 'The Shawshank Redemption', year: 1994 },
-    { label: 'The Godfather', year: 1972 },
-    { label: 'The Godfather: Part II', year: 1974 },
-    { label: 'The Dark Knight', year: 2008 },
-    { label: '12 Angry Men', year: 1957 },
-    { label: "Schindler's List", year: 1993 },
-    { label: 'Pulp Fiction', year: 1994 },
-    {
-        label: 'The Lord of the Rings: The Return of the King',
-        year: 2003,
-    },
+  { label: 'The Shawshank Redemption', year: 1994 },
+  { label: 'The Godfather', year: 1972 },
+  { label: 'The Godfather: Part II', year: 1974 },
+  { label: 'The Dark Knight', year: 2008 },
+  { label: '12 Angry Men', year: 1957 },
+  { label: "Schindler's List", year: 1993 },
+  { label: 'Pulp Fiction', year: 1994 },
+  {
+    label: 'The Lord of the Rings: The Return of the King',
+    year: 2003,
+  },
 ];
 
 export default function addProduct(props) {
-    const { pageTitle, breadcomeTitle, breadcomeLinks } = props
-    const { themeStretch } = useSettings();
-    const { enqueueSnackbar } = useSnackbar();
-    const { pathname, push } = useRouter();
+  const { pageTitle, breadcomeTitle, breadcomeLinks } = props;
+  const { themeStretch } = useSettings();
+  const { enqueueSnackbar } = useSnackbar();
+  const { pathname, push } = useRouter();
 
-    const { user } = useAuth();
+  const { user } = useAuth();
 
-    const [formStateValue, setFormStateValue] = useState({});
-    const [loading, setLoading] = useState(false);
+  const [formStateValue, setFormStateValue] = useState({});
+  const [loading, setLoading] = useState(false);
 
-    const redirectOnSuc = () => {
-        push("/product/produCtList")
+  const redirectOnSuc = () => {
+    push('/product/produCtList');
+  };
+
+  useEffect(() => {
+    onLoad();
+  }, [dispatch]);
+
+  const onLoad = async () => {
+    let res = await dispatch(get_category_list_autocomplete_slice());
+  };
+
+  const UpdateUserSchema = Yup.object().shape({
+    sms_type: Yup.string().required('SMS Type is required'),
+  });
+
+  const defaultValues = {
+    sms_type: formStateValue?.sms_type || '',
+  };
+
+  const methods = useForm({
+    resolver: yupResolver(UpdateUserSchema),
+    defaultValues,
+  });
+
+  const {
+    setValue,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods;
+
+  const onSubmit = async () => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      enqueueSnackbar('Update success!');
+    } catch (error) {
+      console.error(error, 'error={!!error} helperText={error?.message}');
     }
+  };
 
-    useEffect(() => {
-        onLoad()
-    }, [dispatch])
+  const handleDrop = useCallback(
+    (acceptedFiles) => {
+      const file = acceptedFiles[0];
 
-    const onLoad = async () => {
-        let res = await dispatch(get_category_list_autocomplete_slice())
-    }
+      if (file) {
+        setValue(
+          'photoURL',
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          })
+        );
+      }
+    },
+    [setValue]
+  );
 
-    const UpdateUserSchema = Yup.object().shape({
-        sms_type: Yup.string().required('SMS Type is required'),
-    });
-
-    const defaultValues = {
-        sms_type: formStateValue?.sms_type || '',
-    };
-
-    const methods = useForm({
-        resolver: yupResolver(UpdateUserSchema),
-        defaultValues,
-    });
-
-    const {
-        setValue,
-        handleSubmit,
-        formState: { isSubmitting },
-    } = methods;
-
-    const onSubmit = async () => {
-        try {
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            enqueueSnackbar('Update success!');
-        } catch (error) {
-            console.error(error, "error={!!error} helperText={error?.message}");
-        }
-    };
-
-    const handleDrop = useCallback(
-        (acceptedFiles) => {
-            const file = acceptedFiles[0];
-
-            if (file) {
-                setValue(
-                    'photoURL',
-                    Object.assign(file, {
-                        preview: URL.createObjectURL(file),
-                    })
-                );
-            }
-        },
-        [setValue]
-    );
-
-    return (
-        <FormCover
-            pageTitle={"Send Bulk SMS | BULK SMS PLANS"}
-            breadcomeTitle={"Send Bulk SMS"}
-            breadcomeLinks={[
-                { name: 'Home', href: PATH_DASHBOARD.root },
-                { name: 'Send Bulk SMS' },
-            ]}
-        >
-            <FormikCommanNew
-                loading={loading}
-                schema={{
-                    category_id: yup.string('Enter your category').required('category is required'),
-                    // images: yup.string('Enter your images').required('images is required'),
-                    name: yup.string('Enter your name').required('name is required'),
-                    description: yup.string('Enter your description').required('description is required'),
-                    sku: yup.string('Enter your sku').required('sku is required'),
-                    price: yup.string('Enter your price').required('price is required'),
-                    mrp: yup.string('Enter your mrp').required('mrp is required'),
-                    qty: yup.string('Enter your qty').required('qty is required'),
-                    // color: yup.string('Enter your color').required('color is required'),
-                    // sizes: yup.string('Enter your sizes').required('sizes is required')
-                }}
-                initialValuesProps={{
-                    category_id: '',
-                    images: [
-                        "/uploads/files_1679827074573.jpg"
-                    ],
-                    name: '',
-                    description: '',
-                    sku: '',
-                    price: '',
-                    mrp: '',
-                    qty: '',
-                    colors: [],
-                    sizes: []
-                }}
-                onSubmitProps={async (values) => {
-                    console.log("VALUE MALIE GAY", values);
-                    setLoading(true)
-                    let res = await anqAddform(values, add_category_service, redirectOnSuc)
-                    setLoading(false)
-                }}
-                Ch={EcomCategoryAdd}
-            />
-        </FormCover>
-
-    );
+  return (
+    <FormCover
+      pageTitle={'Add Category'}
+      breadcomeTitle={'Add Category'}
+      breadcomeLinks={[{ name: 'Home', href: PATH_DASHBOARD.root }, { name: 'Add Category' }]}
+    >
+      <FormikCommanNew
+        loading={loading}
+        schema={{
+          category_id: yup.string('Enter your category').required('category is required'),
+          // images: yup.string('Enter your images').required('images is required'),
+          name: yup.string('Enter your name').required('name is required'),
+          description: yup.string('Enter your description').required('description is required'),
+          sku: yup.string('Enter your sku').required('sku is required'),
+          price: yup.string('Enter your price').required('price is required'),
+          mrp: yup.string('Enter your mrp').required('mrp is required'),
+          qty: yup.string('Enter your qty').required('qty is required'),
+          // color: yup.string('Enter your color').required('color is required'),
+          // sizes: yup.string('Enter your sizes').required('sizes is required')
+        }}
+        initialValuesProps={{
+          category_id: '',
+          images: ['/uploads/files_1679827074573.jpg'],
+          name: '',
+          description: '',
+          sku: '',
+          price: '',
+          mrp: '',
+          qty: '',
+          colors: [],
+          sizes: [],
+        }}
+        onSubmitProps={async (values) => {
+          console.log('VALUE MALIE GAY', values);
+          setLoading(true);
+          let res = await anqAddform(values, add_category_service, redirectOnSuc);
+          setLoading(false);
+        }}
+        Ch={EcomCategoryAdd}
+      />
+    </FormCover>
+  );
 }
