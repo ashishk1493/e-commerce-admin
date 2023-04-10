@@ -36,6 +36,8 @@ class PADataTable extends React.Component {
       selectedobjRow: {},
     };
     this.handleDelete = this.handleDelete.bind(this);
+    this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
+    this.handleChangePage = this.handleChangePage.bind(this);
   }
 
   customBodyRenderOfAction = (action, value, tableMeta, updateValue) => {
@@ -135,11 +137,13 @@ class PADataTable extends React.Component {
   }
 
   handleChangePage = (event, newPage) => {
-    this.props.setObjPagination({ ...this.props.objPagination, page: newPage });
+    // this.props.setObjPagination({ ...this.props.objPagination, page: newPage });
+    this.props.setPage(newPage);
   };
 
   handleChangeRowsPerPage = (event) => {
-    this.props.setObjPagination({ ...this.props.objPagination, page: 0, size: parseInt(event.target.value, 10) });
+    // this.props.setObjPagination({ ...this.props.objPagination, page: 0, size: parseInt(event.target.value, 10) });
+    this.props.setRowsPerPage(event.target.value);
   };
 
   handleDelete = async (dataObj) => {
@@ -175,12 +179,15 @@ class PADataTable extends React.Component {
             }}
           />
         </RootTableWraper>
-        {this.props?.isPagination && (
+        {this.props.totalRecord > 0 && (
           <TablePagination
             component="div"
-            count={this.props?.objPagination?.count}
-            page={this.props?.objPagination?.page}
-            rowsPerPage={this.props?.objPagination?.size}
+            // count={this.props.objPagination.count}
+            count={this.props.totalRecord}
+            // page={this.props.objPagination.page}
+            page={this.props.page}
+            // rowsPerPage={this.props.objPagination.size}
+            rowsPerPage={this.props.rowsPerPage}
             rowsPerPageOptions={[5, 10, 20]}
             onPageChange={this.handleChangePage}
             onRowsPerPageChange={this.handleChangeRowsPerPage}
