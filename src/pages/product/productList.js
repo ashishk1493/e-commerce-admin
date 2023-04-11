@@ -6,13 +6,10 @@ import useSettings from '../../hooks/useSettings';
 import Layout from '../../layouts';
 import Page from '../../components/Page';
 import Iconify from '../../components/Iconify';
-// import HeaderBreadcrumbs from '../../components/bulk';
 import HeaderBreadcrumbs from '../../components/Bulk/HeaderBreadcrumbs';
 import PADataTable from '../../sections/@bulkcomman/tableAnq/PADataTable';
 import { capitalCase } from 'change-case';
-// import AnqRangeDatePiker from "../../components/Bulk/AnqRangeDatePiker";
 import React, { useEffect, useState } from 'react';
-// import { get_sms_dlr_report_list_slice } from 'src/redux/slices/sms/sms_dlr_report';
 import { useSelector } from 'react-redux';
 import { dispatch } from 'src/redux/store';
 import { get_product_list_slice } from 'src/redux/slices/ecom_product';
@@ -21,26 +18,13 @@ import { ToastContainer } from 'react-toastify';
 
 // ----------------------------------------------------------------------
 
-productList.getLayout = function getLayout(page) {
+ProductList.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
 
 // ----------------------------------------------------------------------
 
-const jobStatus = [
-  { value: 'View All', label: 'View All' },
-  { value: 'Preparing', label: 'Preparing' },
-  { value: 'Completed', label: 'Completed' },
-  { value: 'Partially Finished', label: 'Partially Finished' },
-  { value: 'In Process', label: 'In Process' },
-  { value: 'Scheduled', label: 'Scheduled' },
-  { value: 'Waiting For Execution', label: 'Waiting For Execution' },
-  { value: 'Insufficent Credits', label: 'Insufficent Credits' },
-  { value: 'Stopped', label: 'Stopped' },
-  { value: 'Deleted', label: 'Deleted' },
-];
-
-export default function productList() {
+export default function ProductList() {
   const { themeStretch } = useSettings();
   const { push } = useRouter();
   const [senderId, setSenderId] = useState('');
@@ -48,9 +32,11 @@ export default function productList() {
   const { isLoading, product_list } = useSelector((state) => state.ecom_product);
   const [lstProduct, setLstProduct] = useState([])
   const [isPagination, setIsPagination] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [totalRecord, setTotalRecord] = useState(0);
+  const [search, setSearch] = React.useState('');
 
   const [objPagination, setObjPagination] = useState({
     size: 5,
@@ -58,13 +44,6 @@ export default function productList() {
     count: 10,
     search: '',
   });
-
-  const data = [
-    { name: 'Joe James', totalNumbers: '5', city: 'Yonkers', state: 'NY' },
-    { name: 'John Walsh', totalNumbers: '7', city: 'Hartford', state: 'CT' },
-    { name: 'Bob Herm', totalNumbers: '9', city: 'Tampa', state: 'FL' },
-    { name: 'James Houston', totalNumbers: '3', city: 'Dallas', state: 'TX' },
-  ];
 
   const options = {
     download: false,
@@ -93,27 +72,25 @@ export default function productList() {
   }, [product_list])
   useEffect(() => {
     onLoad();
-    // }, [dispatch, objPagination.size, objPagination.page, objPagination.search]);
-  }, [dispatch, objPagination.count, objPagination.size, objPagination.page, objPagination.search]);
+  }, [search, rowsPerPage, page]);
 
   const onSearch = (value) => {
-    setObjPagination({ ...objPagination, search: value, page: 0 });
+    setSearch(value);
   };
 
   const onLoad = async () => {
-    let res = await dispatch(get_product_list_slice(objPagination));
-    console.log(res, 'res.totalItems');
-    setObjPagination({ ...objPagination, count: res ? res.totalItems : 0 });
-    setIsPagination(true);
-    setLoading(false);
+    let res = await dispatch(get_product_list_slice(rowsPerPage, page, search));
+    setTotalRecord(res.totalItems || 0);
   };
 
   const onDateRange = (ranges) => {
     console.log(ranges, 'date male che');
   };
+
   const handleChangeCurrency = (event) => {
     setCurrency(event.target.value);
   };
+
   const handleSearch = () => {
     console.log(currency, 'currency');
   };
@@ -146,9 +123,7 @@ export default function productList() {
           ]}
         />
         <Card>
-          {/* Table */}
           <PADataTable
-            // title={"Product List"}
             columns={[
               {
                 label: 'Product',
@@ -175,7 +150,6 @@ export default function productList() {
                   },
                 },
               },
-              // { label: "Product", name: "name" },
               { label: 'Create At', name: 'createdAt' },
               { label: 'Status', name: 'inventoryType' },
               { label: 'Price', name: 'price' },
@@ -185,6 +159,13 @@ export default function productList() {
             isPagination={isPagination}
             setObjPagination={setObjPagination}
             objPagination={objPagination}
+            setRowsPerPage={setRowsPerPage}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            setPage={setPage}
+            setSearch={setSearch}
+            search={search}
+            totalRecord={totalRecord}
             onSearch={onSearch}
             loading={isLoading}
             setOpenDeleteModal={setOpenDeleteModal}
