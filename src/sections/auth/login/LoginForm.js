@@ -57,21 +57,9 @@ export default function LoginForm() {
     formState: { errors, isSubmitting },
   } = methods;
 
-  const onSubmit = async (data) => {
-    try {
-      await login(data.email, data.password);
-    } catch (error) {
-      console.error(error);
-      reset();
-      if (isMountedRef.current) {
-        setError('afterSubmit', { ...error, message: error.message });
-      }
-    }
-  };
-
   // const onSubmit = async (data) => {
   //   try {
-  //     let res = await dispatch(login_user_slice({ email: data.email, password: data.password }))
+  //     await login(data.email, data.password);
   //   } catch (error) {
   //     console.error(error);
   //     reset();
@@ -80,6 +68,18 @@ export default function LoginForm() {
   //     }
   //   }
   // };
+
+  const onSubmit = async (data) => {
+    try {
+      let res = await dispatch(login_user_slice({ email: data.email, password: data.password }))
+    } catch (error) {
+      console.error(error);
+      reset();
+      if (isMountedRef.current) {
+        setError('afterSubmit', { ...error, message: error.message });
+      }
+    }
+  };
 
   useEffect(() => {
     if (objUserDetails) {

@@ -46,7 +46,7 @@ export default function productList() {
   const [senderId, setSenderId] = useState('');
   const [currency, setCurrency] = useState('View All');
   const { isLoading, product_list } = useSelector((state) => state.ecom_product);
-
+  const [lstProduct, setLstProduct] = useState([])
   const [isPagination, setIsPagination] = useState(false);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -79,6 +79,19 @@ export default function productList() {
   };
 
   useEffect(() => {
+    let lstTmp = product_list.map((obj) => {
+      return {
+        ...obj,
+        objPName: {
+          name: obj.name,
+          image: obj.images[0],
+        }
+      }
+    })
+    console.log(lstTmp, "lstTmplstTmp");
+    setLstProduct(lstTmp)
+  }, [product_list])
+  useEffect(() => {
     onLoad();
     // }, [dispatch, objPagination.size, objPagination.page, objPagination.search]);
   }, [dispatch, objPagination.count, objPagination.size, objPagination.page, objPagination.search]);
@@ -109,7 +122,15 @@ export default function productList() {
     let res = await delete_product_service(id);
     return res;
   };
+  console.log(product_list, "product_list");
 
+  let imageAndNameShow = (index) => {
+    let objTmp = product_list[index]
+    console.log(product_list, "djdjj");
+    return (
+      'Thay che'
+    )
+  }
   return (
     <Page title="Product List | BULK SMS PLANS">
       <Container maxWidth={themeStretch ? false : 'lg'}>
@@ -131,14 +152,26 @@ export default function productList() {
             columns={[
               {
                 label: 'Product',
-                name: 'name',
+                name: 'objPName',
                 options: {
                   customBodyRender: (value, tableMeta, updateValue) => {
-                    let tmpValue = tableMeta;
-                    console.log(tmpValue, 'valuevalue');
-
-                    console.log(value, 'valuevalue');
-                    return <div>{value}</div>;
+                    return <div style={{ display: "flex" }}>
+                      <div style={{ minWidth: "50px" }}>
+                        <img
+                          src={'http://localhost:8080' + value.image}
+                          style={{
+                            height: "40px",
+                            borderRadius: "10px",
+                            width: "40px",
+                            objectFit: "cover"
+                          }}
+                          alt={value.name}
+                        />
+                      </div>
+                      <div>
+                        {value.name}
+                      </div>
+                    </div>
                   },
                 },
               },
@@ -147,7 +180,7 @@ export default function productList() {
               { label: 'Status', name: 'inventoryType' },
               { label: 'Price', name: 'price' },
             ]}
-            data={product_list}
+            data={lstProduct}
             options={options}
             isPagination={isPagination}
             setObjPagination={setObjPagination}

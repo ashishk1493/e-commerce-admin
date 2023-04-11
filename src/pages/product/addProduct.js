@@ -171,7 +171,7 @@ export default function addProduct(props) {
         }}
         initialValuesProps={{
           category_id: '',
-          images: ['/uploads/files_1679827074573.jpg'],
+          images: [],
           name: '',
           description: '',
           sku: '',

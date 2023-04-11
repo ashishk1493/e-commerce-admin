@@ -34,7 +34,8 @@ import * as Yup from 'yup';
 import BlockContent from '../upload/BlockContent';
 import Compressor from 'compressorjs';
 import { upload_image_service } from 'services/ecom_category.service';
-import { PAnotifySuccess } from 'src/utils/tostMessage';
+import { PAnotifyError, PAnotifySuccess } from 'src/utils/tostMessage';
+import PreviewImage from './PreviewImage';
 
 // import { RHFEditor, RHFRadioGroup, RHFSwitch, TextField, RHFUploadMultiFile } from '../hook-form';
 
@@ -110,13 +111,6 @@ const EcomProductAdd = (props) => {
     [formik.setValue]
   );
   console.log(fileList, 'fileList-');
-  const handleRemoveAll = () => {
-    formik.setValue('images', []);
-  };
-  const handleRemove = (file) => {
-    const filteredItems = values.images?.filter((_file) => _file !== file);
-    formik.setValue('images', filteredItems);
-  };
 
   const onImageChnageEvent = async (event) => {
     let lstFiles = event.target.files;
@@ -128,12 +122,22 @@ const EcomProductAdd = (props) => {
       data.append('files', file);
     }
     let res = await upload_image_service(data);
-    if (res.data.success) {
+    if (res?.data?.success) {
       PAnotifySuccess(res.data.message);
-      formik.setFieldValue('images', res.data.imageUrl);
+      formik.setFieldValue('images', [...formik.values.images, ...res.data.imageUrl]);
     } else {
-      PAnotifyError(res.data.message);
+      PAnotifyError("Something went wrong");
     }
+  };
+
+  const handleRemoveAll = () => {
+    // setValue('images', []);
+    formik.setFieldValue('images', []);
+  };
+
+  const handleRemove = (file) => {
+    const filteredItems = formik.values.images?.filter((_file) => _file !== file);
+    formik.setFieldValue('images', filteredItems);
   };
 
   console.log(category_list_autocomplete, 'category_list_autocomplete');
@@ -187,11 +191,26 @@ const EcomProductAdd = (props) => {
                 <label htmlFor="contained-button-file" style={{ cursor: 'pointer' }}>
                   <BlockContent />
                 </label>
-                <UplodedLabelStyle>
+                {/* <UplodedLabelStyle>
                   {fileList && fileList.map((objFile) => <div>{objFile?.name}</div>)}
-                </UplodedLabelStyle>
+                </UplodedLabelStyle> */}
               </div>
             </Stack>
+            <PreviewImage files={formik.values.images} showPreview={true} onRemove={handleRemove} onRemoveAll={handleRemoveAll} />
+            {/* <div style={{ gap: "5px", display: "grid", gridColumn: "auto" }}>
+              {formik.values.images.map((value) => {
+                console.log(value, 'value-=-=');
+                return (
+                  <div style={{ width: "80px", height: "80px", borderRadius: "5px" }}>
+                    <img
+                      src={'http://localhost:8080' + value}
+                      alt="Product Image"
+                      style={{ width: "100%", height: "100%", borderRadius: "5px" }}
+                    />
+                  </div>
+                )
+              })}
+            </div> */}
           </Card>
         </Grid>
 
