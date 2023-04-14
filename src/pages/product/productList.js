@@ -80,7 +80,7 @@ export default function ProductList() {
 
   const onLoad = async () => {
     let res = await dispatch(get_product_list_slice(rowsPerPage, page, search));
-    setTotalRecord(res.totalItems || 0);
+    setTotalRecord(res?.totalItems || 0);
   };
 
   const onDateRange = (ranges) => {
