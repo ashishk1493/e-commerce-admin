@@ -1,10 +1,21 @@
-import { Autocomplete, Box, Button, Card, CircularProgress, Grid, InputAdornment, Stack, TextField, Typography } from '@mui/material'
-import React, { useCallback, useMemo } from 'react'
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Card,
+  CircularProgress,
+  Grid,
+  InputAdornment,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
+import React, { useCallback, useMemo } from 'react';
 import { LoadingButton } from '@mui/lab';
 
 import { getPerticulerKeyFromSelectedValue } from '../../utils/autocompleteUtils';
 import AnqAutocomplete from '../comman/FormImputs/AnqAutocomplete';
-import AnqCounterTextArea from "./AnqCounterTextArea";
+import AnqCounterTextArea from './AnqCounterTextArea';
 import { useSelector } from 'react-redux';
 import FormDisabledOnLoading from '../comman/FormDisabledOnLoading';
 import {
@@ -22,9 +33,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import BlockContent from '../upload/BlockContent';
 import Compressor from 'compressorjs';
-import { upload_image_service } from 'services/ecom_category.service';
+import { upload_image_service, upload_single_image_service } from 'services/ecom_category.service';
 import PreviewImage from './PreviewImage';
-import { PAnotifySuccess } from 'src/utils/tostMessage';
+import { PAnotifyError, PAnotifySuccess } from 'src/utils/tostMessage';
 
 // import { RHFEditor, RHFRadioGroup, RHFSwitch, TextField, RHFUploadMultiFile } from '../hook-form';
 
@@ -62,14 +73,7 @@ const TAGS_OPTION = [
   '3 Idiots',
 ];
 
-const SIZE_OPTION = [
-  '6',
-  '7',
-  '8',
-  '9',
-  '10',
-];
-
+const SIZE_OPTION = ['6', '7', '8', '9', '10'];
 
 const LabelStyle = styled(Typography)(({ theme }) => ({
   ...theme.typography.subtitle2,
@@ -77,11 +81,10 @@ const LabelStyle = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(1),
 }));
 
-
 // image uploading
 const EcomCategoryAdd = (props) => {
   // const { loading, formik } = props
-  const { loading, formik } = props
+  const { loading, formik } = props;
   const { isLoading, category_list_autocomplete } = useSelector((state) => state.ecom_category);
 
   const handleDrop = useCallback(
@@ -101,32 +104,30 @@ const EcomCategoryAdd = (props) => {
     formik.setValue('category_icon', []);
   };
   const handleRemove = (file) => {
-    const filteredItems = values.category_icon?.filter((_file) => _file !== file);
-    formik.setValue('category_icon', filteredItems);
+    const filteredItems = formik.values.category_icon?.filter((_file) => _file !== file);
+    formik.setFieldValue('category_icon', filteredItems);
   };
   // const onImageChnage = (e) => {
   //   let files = e.target.files
   //   console.log(files, "files");
   // }
 
-  const onImageChnage = async (event) => {
-    const lengthUploadFile = event.target.files.length;
+  const onImageChange = async (event) => {
+    const file = event.target.files[0];
     const data = new FormData();
-    for (let i = 0; i < lengthUploadFile; i++) {
-      const file = event.target.files[i];
-      data.append('files', file);
-    }
-    let res = await upload_image_service(data)
+    data.append('file', file);
+    let res = await upload_single_image_service(data);
     if (res?.data?.success) {
       PAnotifySuccess(res.data.message);
-      formik.setFieldValue('category_icon', [...formik.values.category_icon, ...res.data.imageUrl]);
+      console.log(res.data.message, 'res.data.message-');
+      formik.setFieldValue('category_icon', [res.data.imageUrl]);
     } else {
-      PAnotifyError("Something went wrong");
+      PAnotifyError('Something went wrong');
     }
-  }
+  };
 
-  console.log(category_list_autocomplete, "category_list_autocomplete");
-  console.log(formik.errors, "formik.errors");
+  console.log(category_list_autocomplete, 'category_list_autocomplete');
+  console.log(formik.errors, 'formik.errors');
   return (
     <form onSubmit={formik.handleSubmit}>
       <Grid container spacing={3}>
@@ -137,9 +138,9 @@ const EcomCategoryAdd = (props) => {
                 fullWidth
                 name="name"
                 label="Category Name"
-                value={formik.values.name || ""}
+                value={formik.values.name || ''}
                 onChange={(e) => {
-                  formik.setFieldValue("name", e.target.value)
+                  formik.setFieldValue('name', e.target.value);
                 }}
                 error={formik.touched.name && Boolean(formik.errors.name)}
                 helperText={formik.touched.name && formik.errors.name}
@@ -149,27 +150,31 @@ const EcomCategoryAdd = (props) => {
                 <LabelStyle>Category icon</LabelStyle>
                 <input
                   type="file"
-                  accept='image/png, image/gif, image/jpeg'
+                  accept="image/png, image/gif, image/jpeg"
                   id="contained-button-file"
                   multiple
-                  style={{ display: "none" }}
-                  onChange={(e) => onImageChnage(e)}
+                  style={{ display: 'none' }}
+                  onChange={(e) => onImageChange(e)}
                 />
-                <label htmlFor="contained-button-file" style={{ cursor: "pointer" }}>
+                <label htmlFor="contained-button-file" style={{ cursor: 'pointer' }}>
                   <BlockContent />
                 </label>
               </div>
-              {/* <PreviewImage files={formik.values.category_icon} showPreview={true} onRemove={handleRemove} onRemoveAll={handleRemoveAll} /> */}
-
+              <PreviewImage files={formik.values.category_icon || []} showPreview={true} onRemove={handleRemove} />
             </Stack>
-            <LoadingButton type="submit" variant="contained" loading={loading} style={{ zIndex: "1" }}>
+            <LoadingButton
+              type="submit"
+              variant="contained"
+              loading={loading}
+              style={{ zIndex: '1', marginTop: '15px' }}
+            >
               Add category
             </LoadingButton>
           </Card>
         </Grid>
       </Grid>
     </form>
-  )
-}
+  );
+};
 
-export default EcomCategoryAdd
+export default EcomCategoryAdd;

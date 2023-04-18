@@ -39,7 +39,6 @@ export const GETBYID_PRODUCT_URL = (productId) => UrlParamsReplace('admin/new-pr
 export const GET_CATEGORY_LIST_URL = (size, page, search) =>
   UrlParamsReplace('admin/all-categories?size=:size&page=:page&search=:search', { size, page, search });
 
-
 // category add
 export const ADD_CATEGORY_URL = () => UrlParamsReplace('admin/add-category', {});
 
@@ -47,7 +46,8 @@ export const ADD_CATEGORY_URL = () => UrlParamsReplace('admin/add-category', {})
 export const EDIT_CATEGORY_URL = (categoryId) => UrlParamsReplace('admin/edit-category/:categoryId', { categoryId });
 
 // category delete
-export const DELETE_category_URL = (categoryId) => UrlParamsReplace('admin/delete-category/:categoryId', { categoryId });
+export const DELETE_category_URL = (categoryId) =>
+  UrlParamsReplace('admin/delete-category/:categoryId', { categoryId });
 
 // category get by id
 export const GETBYID_CATEGORY_URL = (categoryId) => UrlParamsReplace('admin/category/:categoryId', { categoryId });
@@ -57,5 +57,8 @@ export const GET_CATEGORY_LIST_AUTOCOMPLETE_URL = () => UrlParamsReplace('admin/
 
 // Upload image
 export const UPLOAD_IMAGE_URL = () => UrlParamsReplace('admin/upload-multi-files', {});
+
+// Upload single file
+export const UPLOAD_SINGLE_IMAGE_URL = () => UrlParamsReplace('admin/upload-file', {});
 
 // #############################################################################################################################
