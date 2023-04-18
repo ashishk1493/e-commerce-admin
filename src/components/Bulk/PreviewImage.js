@@ -37,7 +37,7 @@ PreviewImage.propTypes = {
 };
 
 export default function PreviewImage({ showPreview = false, files, onRemove, onRemoveAll }) {
-    const hasFile = files.length > 0;
+    const hasFile = files?.length > 0;
 
     return (
         <>

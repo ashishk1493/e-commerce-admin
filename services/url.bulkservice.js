@@ -22,7 +22,14 @@ export const GET_PRODUCT_LIST_URL = (size, page, search) =>
 // product add
 export const ADD_PRODUCT_URL = () => UrlParamsReplace('admin/add-new-product', {});
 
+// product edit
+export const EDIT_PRODUCT_URL = (productId) => UrlParamsReplace('admin/edit-new-product/:productId', { productId });
+
+// product delete
 export const DELETE_PRODUCT_URL = (productId) => UrlParamsReplace('admin/delete-new-product/:productId', { productId });
+
+// product get by id
+export const GETBYID_PRODUCT_URL = (productId) => UrlParamsReplace('admin/new-product/:productId', { productId });
 
 // #############################################################################################################################
 
@@ -31,6 +38,19 @@ export const DELETE_PRODUCT_URL = (productId) => UrlParamsReplace('admin/delete-
 // Categories list
 export const GET_CATEGORY_LIST_URL = (size, page, search) =>
   UrlParamsReplace('admin/all-categories?size=:size&page=:page&search=:search', { size, page, search });
+
+
+// category add
+export const ADD_CATEGORY_URL = () => UrlParamsReplace('admin/add-category', {});
+
+// category edit
+export const EDIT_CATEGORY_URL = (categoryId) => UrlParamsReplace('admin/edit-category/:categoryId', { categoryId });
+
+// category delete
+export const DELETE_category_URL = (categoryId) => UrlParamsReplace('admin/delete-category/:categoryId', { categoryId });
+
+// category get by id
+export const GETBYID_CATEGORY_URL = (categoryId) => UrlParamsReplace('admin/category/:categoryId', { categoryId });
 
 // Autocomplete Categories list
 export const GET_CATEGORY_LIST_AUTOCOMPLETE_URL = () => UrlParamsReplace('admin/all-categories', {});

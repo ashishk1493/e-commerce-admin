@@ -6,45 +6,64 @@ import useSettings from '../../hooks/useSettings';
 import Layout from '../../layouts';
 import Page from '../../components/Page';
 import Iconify from '../../components/Iconify';
+// import HeaderBreadcrumbs from '../../components/bulk';
 import HeaderBreadcrumbs from '../../components/Bulk/HeaderBreadcrumbs';
 import PADataTable from '../../sections/@bulkcomman/tableAnq/PADataTable';
 import { capitalCase } from 'change-case';
+// import AnqRangeDatePiker from "../../components/Bulk/AnqRangeDatePiker";
 import React, { useEffect, useState } from 'react';
+// import { get_sms_dlr_report_list_slice } from 'src/redux/slices/sms/sms_dlr_report';
 import { useSelector } from 'react-redux';
 import { dispatch } from 'src/redux/store';
-import { delete_category_service } from 'services/ecom_category.service';
-import { ToastContainer } from 'react-toastify';
 import { get_category_list_slice } from 'src/redux/slices/ecom_category';
 import moment from 'moment';
 
 // ----------------------------------------------------------------------
 
-CategoryList.getLayout = function getLayout(page) {
+categoryList.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
 
 // ----------------------------------------------------------------------
 
-export default function CategoryList() {
+const jobStatus = [
+  { value: 'View All', label: 'View All' },
+  { value: 'Preparing', label: 'Preparing' },
+  { value: 'Completed', label: 'Completed' },
+  { value: 'Partially Finished', label: 'Partially Finished' },
+  { value: 'In Process', label: 'In Process' },
+  { value: 'Scheduled', label: 'Scheduled' },
+  { value: 'Waiting For Execution', label: 'Waiting For Execution' },
+  { value: 'Insufficent Credits', label: 'Insufficent Credits' },
+  { value: 'Stopped', label: 'Stopped' },
+  { value: 'Deleted', label: 'Deleted' },
+];
+
+export default function categoryList() {
   const { themeStretch } = useSettings();
   const { push } = useRouter();
   const [senderId, setSenderId] = useState('');
   const [currency, setCurrency] = useState('View All');
   const { isLoading, category_list } = useSelector((state) => state.ecom_category);
-  const [lstCategory, setLstCategory] = useState([])
+
   const [isPagination, setIsPagination] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [totalRecord, setTotalRecord] = useState(0);
-  const [search, setSearch] = React.useState('');
+  const [search, setSearch] = useState('');
 
   const [objPagination, setObjPagination] = useState({
     size: 5,
     page: 0,
-    count: 10,
+    count: 0,
     search: '',
   });
+
+  const data = [
+    { name: 'Joe James', totalNumbers: '5', city: 'Yonkers', state: 'NY' },
+    { name: 'John Walsh', totalNumbers: '7', city: 'Hartford', state: 'CT' },
+    { name: 'Bob Herm', totalNumbers: '9', city: 'Tampa', state: 'FL' },
+    { name: 'James Houston', totalNumbers: '3', city: 'Dallas', state: 'TX' },
+  ];
 
   const options = {
     download: false,
@@ -59,71 +78,48 @@ export default function CategoryList() {
   };
 
   useEffect(() => {
-    let lstTmp = category_list.map((obj) => {
-      return {
-        ...obj,
-        // objPName: {
-        //   name: obj.name,
-        //   image: obj.images[0],
-        // }
-      }
-    })
-    console.log(lstTmp, "lstTmplstTmp");
-    setLstCategory(category_list)
-  }, [category_list])
-  useEffect(() => {
     onLoad();
-  }, [search, rowsPerPage, page]);
+    //   }, [objPagination.size, objPagination.page, objPagination.search]);
+  }, [dispatch, objPagination.count, objPagination.size, objPagination.page, objPagination.search]);
 
   const onSearch = (value) => {
-    setSearch(value);
+    setObjPagination({ ...objPagination, search: value, page: 0 });
   };
 
   const onLoad = async () => {
-    let res = await dispatch(get_category_list_slice(rowsPerPage, page, search));
-    setTotalRecord(res?.totalItems || 0);
+    let res = await dispatch(get_category_list_slice(objPagination));
+    console.log(res, 'res.totalItems');
+    setObjPagination({ ...objPagination, count: res ? res.totalItems : 0 });
+    setIsPagination(true);
+    setLoading(false);
   };
 
   const onDateRange = (ranges) => {
     console.log(ranges, 'date male che');
   };
-
   const handleChangeCurrency = (event) => {
     setCurrency(event.target.value);
   };
-
   const handleSearch = () => {
     console.log(currency, 'currency');
   };
 
-  const handleDeleteCategory = async (id) => {
-    let res = await delete_category_service(id);
-    return res;
+  const handleDelete = (data) => {
+    console.log(data, 'dataore-');
+    setOpenDeleteModal(true);
   };
+  console.log(category_list, 'category_list');
 
-  const handelEdit = async (objCategory) => {
-    console.log(objCategory.id, "call thay gyu che");
-    push(`/category/edit/${objCategory.id}`);
-  };
-  console.log(category_list, "category_list");
-
-  let imageAndNameShow = (index) => {
-    let objTmp = category_list[index]
-    console.log(category_list, "djdjj");
-    return (
-      'Thay che'
-    )
-  }
   return (
-    <Page title="Category List | BULK SMS PLANS">
+    <Page title="Category List">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
           heading="Category List"
-          links={[{ name: 'Home', href: '/' }, { name: capitalCase('Category List') }]}
+          links={[{ name: 'Home', href: '/' }, { name: capitalCase('category List') }]}
           action={[
             <NextLink href={'/category/addCategory'} passHref>
               <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
-                New Category
+                New category
               </Button>
             </NextLink>,
           ]}
@@ -147,40 +143,22 @@ export default function CategoryList() {
               },
               { label: 'Status', name: 'status' },
             ]}
-            data={lstCategory}
+            data={category_list}
             options={options}
-            action={{
-              delete: (id) => handleDeleteCategory(id),
-              edit: (objCategory) => handelEdit(objCategory),
-            }}
-
             isPagination={isPagination}
             setObjPagination={setObjPagination}
             objPagination={objPagination}
-            setRowsPerPage={setRowsPerPage}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            setPage={setPage}
-            setSearch={setSearch}
-            search={search}
-            totalRecord={totalRecord}
             onSearch={onSearch}
             loading={isLoading}
-            setOpenDeleteModal={setOpenDeleteModal}
             openDeleteModal={openDeleteModal}
-            deleteApiUrl="/admin/delete-category"
-            onLoad={onLoad}
+            setOpenDeleteModal={setOpenDeleteModal}
+            action={{
+              delete: (rowData) => {
+                handleDelete(rowData);
+              },
+            }}
           />
         </Card>
-        <ToastContainer
-          position="top-right"
-          hideProgressBar={false}
-          autoClose={false}
-          newestOnTop={true}
-          closeOnClick={false}
-          draggable={false}
-          rtl={false}
-        />
       </Container>
     </Page>
   );

@@ -10,10 +10,10 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { LoadingButton } from '@mui/lab';
 
-import { getPerticulerKeyFromSelectedValue } from '../../utils/autocompleteUtils';
+import { getPerticulerKeyFromSelectedValue, getValueofAutocomplete } from '../../utils/autocompleteUtils';
 import AnqAutocomplete from '../comman/FormImputs/AnqAutocomplete';
 import AnqCounterTextArea from './AnqCounterTextArea';
 import { useSelector } from 'react-redux';
@@ -36,6 +36,8 @@ import Compressor from 'compressorjs';
 import { upload_image_service } from 'services/ecom_category.service';
 import { PAnotifyError, PAnotifySuccess } from 'src/utils/tostMessage';
 import PreviewImage from './PreviewImage';
+import { getbyid_product_service } from 'services/ecom_product.service';
+import { useRouter } from 'next/router';
 
 // import { RHFEditor, RHFRadioGroup, RHFSwitch, TextField, RHFUploadMultiFile } from '../hook-form';
 
@@ -92,11 +94,37 @@ const UplodedLabelStyle = styled(Typography)(({ theme }) => ({
 
 // image uploading
 const EcomProductAdd = (props) => {
+  const { query, pathname, push } = useRouter();
   // const { loading, formik } = props
   const { loading, formik } = props;
   const [fileList, setFileList] = useState([]);
   const { isLoading, category_list_autocomplete } = useSelector((state) => state.ecom_category);
 
+
+  const { id } = query;
+
+  useEffect(() => {
+    // if (id)
+    //   onLoad()
+  }, [id])
+
+  const onLoad = async () => {
+    let resProduct = await getbyid_product_service(id)
+    let objUser = resProduct.data.data
+    console.log(objUser, "resProduct add");
+    // formik.setFieldValue('description', e.target.value);
+
+    formik.setFieldValue('category_id', objUser.category_id);
+    formik.setFieldValue('images', objUser.images);
+    formik.setFieldValue('name', objUser.name);
+    formik.setFieldValue('description', objUser.description);
+    formik.setFieldValue('sku', objUser.sku);
+    formik.setFieldValue('price', objUser.price);
+    formik.setFieldValue('mrp', objUser.mrp);
+    formik.setFieldValue('qty', objUser.qty);
+    formik.setFieldValue('colors', objUser.colors);
+    formik.setFieldValue('sizes', objUser.sizes);
+  }
   const handleDrop = useCallback(
     (acceptedFiles) => {
       formik.setValue(
@@ -142,8 +170,12 @@ const EcomProductAdd = (props) => {
 
   console.log(category_list_autocomplete, 'category_list_autocomplete');
   console.log(formik.errors, 'formik.errors');
+  console.log(formik.values.category_id, "formik.values.category_id");
   return (
     <form onSubmit={formik.handleSubmit} encType="multipart/form-data">
+      {loading &&
+        <FormDisabledOnLoading />
+      }
       <Grid container spacing={3}>
         <Grid item xs={12} md={8}>
           <Card sx={{ p: 3 }}>
@@ -225,10 +257,11 @@ const EcomProductAdd = (props) => {
                   label="Category"
                   name="category_id"
                   // disablePortal
+                  value={getValueofAutocomplete(formik.values.category_id, category_list_autocomplete, 'id')}
                   options={category_list_autocomplete}
                   getOptionLabel={(option) => option.name}
                   onChange={(e, value) => {
-                    let valueTmp = getPerticulerKeyFromSelectedValue(e, value, 'name');
+                    let valueTmp = getPerticulerKeyFromSelectedValue(e, value, 'id');
                     formik.setFieldValue('category_id', valueTmp);
                   }}
                   required={true}
@@ -320,7 +353,7 @@ const EcomProductAdd = (props) => {
               {/* <RHFSwitch name="taxes" label="Price includes taxes" /> */}
             </Card>
             <LoadingButton type="submit" variant="contained" loading={loading} style={{ zIndex: '1' }}>
-              Add Product
+              {id ? "Edit Product" : "Add Product"}
             </LoadingButton>
           </Stack>
         </Grid>

@@ -23,6 +23,8 @@ import * as Yup from 'yup';
 import BlockContent from '../upload/BlockContent';
 import Compressor from 'compressorjs';
 import { upload_image_service } from 'services/ecom_category.service';
+import PreviewImage from './PreviewImage';
+import { PAnotifySuccess } from 'src/utils/tostMessage';
 
 // import { RHFEditor, RHFRadioGroup, RHFSwitch, TextField, RHFUploadMultiFile } from '../hook-form';
 
@@ -85,7 +87,7 @@ const EcomCategoryAdd = (props) => {
   const handleDrop = useCallback(
     (acceptedFiles) => {
       formik.setValue(
-        'images',
+        'category_icon',
         acceptedFiles.map((file) =>
           Object.assign(file, {
             preview: URL.createObjectURL(file),
@@ -96,11 +98,11 @@ const EcomCategoryAdd = (props) => {
     [formik.setValue]
   );
   const handleRemoveAll = () => {
-    formik.setValue('images', []);
+    formik.setValue('category_icon', []);
   };
   const handleRemove = (file) => {
-    const filteredItems = values.images?.filter((_file) => _file !== file);
-    formik.setValue('images', filteredItems);
+    const filteredItems = values.category_icon?.filter((_file) => _file !== file);
+    formik.setValue('category_icon', filteredItems);
   };
   // const onImageChnage = (e) => {
   //   let files = e.target.files
@@ -115,6 +117,12 @@ const EcomCategoryAdd = (props) => {
       data.append('files', file);
     }
     let res = await upload_image_service(data)
+    if (res?.data?.success) {
+      PAnotifySuccess(res.data.message);
+      formik.setFieldValue('category_icon', [...formik.values.category_icon, ...res.data.imageUrl]);
+    } else {
+      PAnotifyError("Something went wrong");
+    }
   }
 
   console.log(category_list_autocomplete, "category_list_autocomplete");
@@ -128,7 +136,7 @@ const EcomCategoryAdd = (props) => {
               <TextField
                 fullWidth
                 name="name"
-                label="Product Name"
+                label="Category Name"
                 value={formik.values.name || ""}
                 onChange={(e) => {
                   formik.setFieldValue("name", e.target.value)
@@ -138,7 +146,7 @@ const EcomCategoryAdd = (props) => {
               />
 
               <div>
-                <LabelStyle>Images</LabelStyle>
+                <LabelStyle>Category icon</LabelStyle>
                 <input
                   type="file"
                   accept='image/png, image/gif, image/jpeg'
@@ -151,6 +159,8 @@ const EcomCategoryAdd = (props) => {
                   <BlockContent />
                 </label>
               </div>
+              {/* <PreviewImage files={formik.values.category_icon} showPreview={true} onRemove={handleRemove} onRemoveAll={handleRemoveAll} /> */}
+
             </Stack>
             <LoadingButton type="submit" variant="contained" loading={loading} style={{ zIndex: "1" }}>
               Add category

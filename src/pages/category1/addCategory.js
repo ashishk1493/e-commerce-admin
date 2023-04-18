@@ -52,9 +52,9 @@ import BulkSMSForm from 'src/components/Bulk/BulkSMSForm';
 // import { get_list_for_bulk_sms_form_slice, set_add_loading_slice } from 'src/redux/slices/sms/sms_bulk_sms';
 import { dispatch } from 'src/redux/store';
 import { get_category_list_autocomplete_slice, get_category_list_slice } from 'src/redux/slices/ecom_category';
+import { add_category_service } from 'services/ecom_category.service';
 import { anqAddform } from 'src/utils/bulkComman';
 import EcomCategoryAdd from 'src/components/Bulk/EcomCategoryAdd';
-import { add_category_service } from 'services/ecom_category.service';
 // import { add_sms_bulk_sms } from 'services/sms/sms_bulk_sms.service';
 // import { anqAddform } from 'src/utils/bulkComman';
 
@@ -62,7 +62,7 @@ import { add_category_service } from 'services/ecom_category.service';
 
 // ----------------------------------------------------------------------
 
-addCategory.getLayout = function getLayout(page) {
+addProduct.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
 
@@ -82,7 +82,7 @@ const top100Films = [
   },
 ];
 
-export default function addCategory(props) {
+export default function addProduct(props) {
   const { pageTitle, breadcomeTitle, breadcomeLinks } = props;
   const { themeStretch } = useSettings();
   const { enqueueSnackbar } = useSnackbar();
@@ -94,7 +94,7 @@ export default function addCategory(props) {
   const [loading, setLoading] = useState(false);
 
   const redirectOnSuc = () => {
-    push('/category/categoryList');
+    push('/product/produCtList');
   };
 
   useEffect(() => {
@@ -158,12 +158,28 @@ export default function addCategory(props) {
       <FormikCommanNew
         loading={loading}
         schema={{
-          category_icon: yup.string('Enter your category icon').required('Category icon is required'),
-          name: yup.string('Enter your name').required('name is required')
+          category_id: yup.string('Enter your category').required('category is required'),
+          // images: yup.string('Enter your images').required('images is required'),
+          name: yup.string('Enter your name').required('name is required'),
+          description: yup.string('Enter your description').required('description is required'),
+          sku: yup.string('Enter your sku').required('sku is required'),
+          price: yup.string('Enter your price').required('price is required'),
+          mrp: yup.string('Enter your mrp').required('mrp is required'),
+          qty: yup.string('Enter your qty').required('qty is required'),
+          // color: yup.string('Enter your color').required('color is required'),
+          // sizes: yup.string('Enter your sizes').required('sizes is required')
         }}
         initialValuesProps={{
-          category_icon: '',
-          name: ""
+          category_id: '',
+          images: ['/uploads/files_1679827074573.jpg'],
+          name: '',
+          description: '',
+          sku: '',
+          price: '',
+          mrp: '',
+          qty: '',
+          colors: [],
+          sizes: [],
         }}
         onSubmitProps={async (values) => {
           console.log('VALUE MALIE GAY', values);

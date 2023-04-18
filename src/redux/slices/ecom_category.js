@@ -53,7 +53,7 @@ export const { setListData, setListDataAUtocomleteList } = slice.actions;
 
 // // ----------------------------------------------------------------------
 
-export function get_category_list_slice({ size, page, search }) {
+export function get_category_list_slice(size, page, search) {
   return async () => {
     dispatch(slice.actions.startLoading());
     try {

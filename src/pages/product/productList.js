@@ -99,6 +99,11 @@ export default function ProductList() {
     let res = await delete_product_service(id);
     return res;
   };
+
+  const handelEdit = async (objProduct) => {
+    console.log(objProduct.id, "call thay gyu che");
+    push(`/product/edit/${objProduct.id}`);
+  };
   console.log(product_list, "product_list");
 
   let imageAndNameShow = (index) => {
@@ -156,6 +161,11 @@ export default function ProductList() {
             ]}
             data={lstProduct}
             options={options}
+            action={{
+              delete: (id) => handleDeleteProduct(id),
+              edit: (objProduct) => handelEdit(objProduct),
+            }}
+
             isPagination={isPagination}
             setObjPagination={setObjPagination}
             objPagination={objPagination}
@@ -172,9 +182,6 @@ export default function ProductList() {
             openDeleteModal={openDeleteModal}
             deleteApiUrl="/admin/delete-new-product"
             onLoad={onLoad}
-            action={{
-              delete: (id) => handleDeleteProduct(id),
-            }}
           />
         </Card>
         <ToastContainer
