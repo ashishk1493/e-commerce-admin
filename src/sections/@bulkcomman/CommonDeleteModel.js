@@ -34,7 +34,7 @@ export default function CommonDeleteModel(props) {
         <Box sx={style}>
           <Stack spacing={3}>
             <Typography variant="h4"> Are you sure?</Typography>
-            <p>You will not be able to recover this imaginary file!</p>
+            <p>You will not be able to get this product again!</p>
 
             <Stack direction="row" justifyContent="flex-end" spacing={1.5}>
               <Button color="inherit" variant="outlined" onClick={handleClose}>

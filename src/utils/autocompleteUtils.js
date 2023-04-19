@@ -2,29 +2,29 @@
 export const getPerticulerKeyFromSelectedValue = (e, value, key) => {
   if (value) {
     if (value[key]) {
-      console.log(value, "value---")
-      return value[key]
+      console.log(value, 'value---');
+      return value[key];
     }
   } else {
-    return ''
+    return '';
   }
-}
+};
 
 // get value of autocomplete
 export const getValueofAutocomplete = (id, list, key) => {
-  let lstExist = list.filter((obj) => obj[key] == id)
+  let lstExist = list.filter((obj) => obj[key] == id);
   if (lstExist.length) {
-    return lstExist[0]
+    return lstExist[0];
   } else {
-    return {}
+    return {};
   }
-}
+};
 
 // get full value object
 export const getFullValueObject = (e, value) => {
   if (value) {
-    return value
+    return value;
   } else {
-    return ""
+    return '';
   }
-}
+};

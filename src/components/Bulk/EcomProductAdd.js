@@ -100,18 +100,17 @@ const EcomProductAdd = (props) => {
   const [fileList, setFileList] = useState([]);
   const { isLoading, category_list_autocomplete } = useSelector((state) => state.ecom_category);
 
-
   const { id } = query;
 
   useEffect(() => {
     // if (id)
     //   onLoad()
-  }, [id])
+  }, [id]);
 
   const onLoad = async () => {
-    let resProduct = await getbyid_product_service(id)
-    let objUser = resProduct.data.data
-    console.log(objUser, "resProduct add");
+    let resProduct = await getbyid_product_service(id);
+    let objUser = resProduct.data.data;
+    console.log(objUser, 'resProduct add');
     // formik.setFieldValue('description', e.target.value);
 
     formik.setFieldValue('category_id', objUser.category_id);
@@ -124,7 +123,7 @@ const EcomProductAdd = (props) => {
     formik.setFieldValue('qty', objUser.qty);
     formik.setFieldValue('colors', objUser.colors);
     formik.setFieldValue('sizes', objUser.sizes);
-  }
+  };
   const handleDrop = useCallback(
     (acceptedFiles) => {
       formik.setValue(
@@ -154,7 +153,7 @@ const EcomProductAdd = (props) => {
       PAnotifySuccess(res.data.message);
       formik.setFieldValue('images', [...formik.values.images, ...res.data.imageUrl]);
     } else {
-      PAnotifyError("Something went wrong");
+      PAnotifyError('Something went wrong');
     }
   };
 
@@ -170,12 +169,10 @@ const EcomProductAdd = (props) => {
 
   console.log(category_list_autocomplete, 'category_list_autocomplete');
   console.log(formik.errors, 'formik.errors');
-  console.log(formik.values.category_id, "formik.values.category_id");
+  console.log(formik.values.category_id, 'formik.values.category_id');
   return (
     <form onSubmit={formik.handleSubmit} encType="multipart/form-data">
-      {loading &&
-        <FormDisabledOnLoading />
-      }
+      {loading && <FormDisabledOnLoading />}
       <Grid container spacing={3}>
         <Grid item xs={12} md={8}>
           <Card sx={{ p: 3 }}>
@@ -228,7 +225,12 @@ const EcomProductAdd = (props) => {
                 </UplodedLabelStyle> */}
               </div>
             </Stack>
-            <PreviewImage files={formik.values.images} showPreview={true} onRemove={handleRemove} onRemoveAll={handleRemoveAll} />
+            <PreviewImage
+              files={formik.values.images}
+              showPreview={true}
+              onRemove={handleRemove}
+              onRemoveAll={handleRemoveAll}
+            />
             {/* <div style={{ gap: "5px", display: "grid", gridColumn: "auto" }}>
               {formik.values.images.map((value) => {
                 console.log(value, 'value-=-=');
@@ -259,7 +261,7 @@ const EcomProductAdd = (props) => {
                   // disablePortal
                   value={getValueofAutocomplete(formik.values.category_id, category_list_autocomplete, 'id')}
                   options={category_list_autocomplete}
-                  getOptionLabel={(option) => option.name}
+                  getOptionLabel={(option) => option.name || ''}
                   onChange={(e, value) => {
                     let valueTmp = getPerticulerKeyFromSelectedValue(e, value, 'id');
                     formik.setFieldValue('category_id', valueTmp);
@@ -353,7 +355,7 @@ const EcomProductAdd = (props) => {
               {/* <RHFSwitch name="taxes" label="Price includes taxes" /> */}
             </Card>
             <LoadingButton type="submit" variant="contained" loading={loading} style={{ zIndex: '1' }}>
-              {id ? "Edit Product" : "Add Product"}
+              {id ? 'Edit Product' : 'Add Product'}
             </LoadingButton>
           </Stack>
         </Grid>
