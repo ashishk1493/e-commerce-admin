@@ -12,26 +12,25 @@ import { capitalCase } from 'change-case';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { dispatch } from 'src/redux/store';
-import { delete_category_service } from 'services/ecom_category.service';
+import { get_order_list_slice } from 'src/redux/slices/ecom_order';
+import { delete_order_service } from 'services/ecom_order.service';
 import { ToastContainer } from 'react-toastify';
-import { get_category_list_slice } from 'src/redux/slices/ecom_category';
-import moment from 'moment';
 
 // ----------------------------------------------------------------------
 
-CategoryList.getLayout = function getLayout(page) {
+OrderList.getLayout = function getLayout(page) {
   return <Layout>{page}</Layout>;
 };
 
 // ----------------------------------------------------------------------
 
-export default function CategoryList() {
+export default function OrderList() {
   const { themeStretch } = useSettings();
   const { push } = useRouter();
   const [senderId, setSenderId] = useState('');
   const [currency, setCurrency] = useState('View All');
-  const { isLoading, category_list } = useSelector((state) => state.ecom_category);
-  const [lstCategory, setLstCategory] = useState([])
+  const { isLoading, order_list } = useSelector((state) => state.ecom_order);
+  const [lstOrder, setLstOrder] = useState([])
   const [isPagination, setIsPagination] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [page, setPage] = useState(0);
@@ -59,18 +58,14 @@ export default function CategoryList() {
   };
 
   useEffect(() => {
-    let lstTmp = category_list.map((obj) => {
+    let lstTmp = order_list.map((obj) => {
       return {
         ...obj,
-        status: obj.status ? "Active" : "Inactive"
-        // objPName: {
-        //   name: obj.name,
-        //   image: obj.images[0],
-        // }
       }
     })
-    setLstCategory(lstTmp)
-  }, [category_list])
+    console.log(lstTmp, "lstTmplstTmp");
+    setLstOrder(lstTmp)
+  }, [order_list])
   useEffect(() => {
     onLoad();
   }, [search, rowsPerPage, page]);
@@ -80,7 +75,7 @@ export default function CategoryList() {
   };
 
   const onLoad = async () => {
-    let res = await dispatch(get_category_list_slice(rowsPerPage, page, search));
+    let res = await dispatch(get_order_list_slice(rowsPerPage, page, search));
     setTotalRecord(res?.totalItems || 0);
   };
 
@@ -96,63 +91,53 @@ export default function CategoryList() {
     console.log(currency, 'currency');
   };
 
-  const handleDeleteCategory = async (id) => {
-    let res = await delete_category_service(id);
+  const handleDeleteOrder = async (id) => {
+    let res = await delete_order_service(id);
     return res;
   };
 
-  const handelEdit = async (objCategory) => {
-    console.log(objCategory.id, "call thay gyu che");
-    push(`/category/edit/${objCategory.id}`);
+  const handelEdit = async (objOrder) => {
+    console.log(objOrder.id, "call thay gyu che");
+    push(`/order/edit/${objOrder.id}`);
   };
-  console.log(category_list, "category_list");
+  console.log(order_list, "order_list");
 
   let imageAndNameShow = (index) => {
-    let objTmp = category_list[index]
-    console.log(category_list, "djdjj");
+    let objTmp = order_list[index]
+    console.log(order_list, "djdjj");
     return (
       'Thay che'
     )
   }
   return (
-    <Page title="Category List | BULK SMS PLANS">
+    <Page title="Order List | BULK SMS PLANS">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
-          heading="Category List"
-          links={[{ name: 'Home', href: '/' }, { name: capitalCase('Category List') }]}
-          action={[
-            <NextLink href={'/category/addCategory'} passHref>
-              <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
-                New Category
-              </Button>
-            </NextLink>,
-          ]}
+          heading="Order List"
+          links={[{ name: 'Home', href: '/' }, { name: capitalCase('Order List') }]}
+        // action={[
+        //   <NextLink href={'/Order/addOrder'} passHref>
+        //     <Button variant="contained" startIcon={<Iconify icon={'eva:plus-fill'} />}>
+        //       New Order
+        //     </Button>
+        //   </NextLink>,
+        // ]}
         />
         <Card>
           <PADataTable
             columns={[
-              {
-                label: 'Category',
-                name: 'name',
-              },
-              {
-                label: 'Create At',
-                name: 'createdAt',
-                options: {
-                  customBodyRender: (value, tableMeta, updateValue) => {
-                    let tmpValue = moment(value).format('LLL');
-                    return <div>{tmpValue}</div>;
-                  },
-                },
-              },
-              { label: 'Status', name: 'status' },
+              { label: 'invoice_no', name: 'invoice_no' },
+              { label: 'order_total', name: 'order_total' },
+              { label: 'payment_method', name: 'payment_method' },
+              { label: 'status', name: 'status' },
+              { label: 'createdAt', name: 'createdAt' },
             ]}
-            data={lstCategory}
+            data={lstOrder}
             options={options}
-            action={{
-              delete: (id) => handleDeleteCategory(id),
-              edit: (objCategory) => handelEdit(objCategory),
-            }}
+            // action={{
+            //   delete: (id) => handleDeleteOrder(id),
+            //   edit: (objOrder) => handelEdit(objOrder),
+            // }}
 
             isPagination={isPagination}
             setObjPagination={setObjPagination}
@@ -168,7 +153,7 @@ export default function CategoryList() {
             loading={isLoading}
             setOpenDeleteModal={setOpenDeleteModal}
             openDeleteModal={openDeleteModal}
-            deleteApiUrl="/admin/delete-category"
+            deleteApiUrl="/admin/delete-new-order"
             onLoad={onLoad}
           />
         </Card>

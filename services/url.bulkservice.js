@@ -62,3 +62,17 @@ export const UPLOAD_IMAGE_URL = () => UrlParamsReplace('admin/upload-multi-files
 export const UPLOAD_SINGLE_IMAGE_URL = () => UrlParamsReplace('admin/upload-file', {});
 
 // #############################################################################################################################
+
+// ############################################################# Product ##########################################################
+
+// order list
+export const GET_ORDER_LIST_URL = (size, page, search) =>
+  UrlParamsReplace('admin/all-orders?size=:size&page=:page&search=:search', { size, page, search });
+
+// order add
+export const ADD_ORDER_URL = () => UrlParamsReplace('admin/add-order', {});
+
+// order get by id
+export const GETBYID_ORDER_URL = (orderId) => UrlParamsReplace('admin/order/:orderId', { orderId });
+
+// #############################################################################################################################

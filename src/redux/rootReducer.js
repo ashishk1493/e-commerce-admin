@@ -10,6 +10,7 @@ import kanbanReducer from './slices/kanban';
 import user from './slices/user';
 import ecom_product from './slices/ecom_product';
 import ecom_category from './slices/ecom_category';
+import ecom_order from './slices/ecom_order';
 
 // ----------------------------------------------------------------------
 
@@ -49,7 +50,8 @@ const rootReducer = combineReducers({
   product: persistReducer(productPersistConfig, productReducer),
   user: user,
   ecom_product: ecom_product,
-  ecom_category: ecom_category
+  ecom_category: ecom_category,
+  ecom_order: ecom_order,
 });
 
 export { rootPersistConfig, rootReducer };
