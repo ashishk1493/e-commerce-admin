@@ -15,6 +15,7 @@ import useIsMountedRef from '../../../hooks/useIsMountedRef';
 import MyAvatar from '../../../components/MyAvatar';
 import MenuPopover from '../../../components/MenuPopover';
 import { IconButtonAnimate } from '../../../components/animate';
+import { removeAuth } from 'services/identity.service';
 
 // ----------------------------------------------------------------------
 
@@ -56,7 +57,7 @@ export default function AccountPopover() {
 
   const handleLogout = async () => {
     try {
-      await logout();
+      removeAuth();
       router.replace(PATH_AUTH.login);
 
       if (isMountedRef.current) {

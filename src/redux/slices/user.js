@@ -6,7 +6,7 @@ import uniqBy from 'lodash/uniqBy';
 import axios from '../../utils/axios';
 //
 import { dispatch } from '../store';
-import { login_user_service } from '../../../services/user.service.js'
+import { login_user_service } from '../../../services/user.service.js';
 import { setAuth } from 'services/identity.service';
 // next
 import Router, { useRouter } from 'next/router';
@@ -43,7 +43,6 @@ const slice = createSlice({
       state.isLoading = false;
       state.objUserDetails = action.payload;
     },
-
   },
 });
 
@@ -59,15 +58,16 @@ export function login_user_slice({ email, password }) {
   return async () => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await login_user_service(email, password)
-      console.log(response.data, "response-");
+      const response = await login_user_service(email, password);
+      console.log(response.data, 'response-');
       if (response.data.success == 'true') {
         dispatch(slice.actions.setuserDetails(response.data));
+        setAuth({ token: response.data.data.accessToken });
+        return response.data;
       } else {
         dispatch(slice.actions.setuserDetails(response.data));
+        return response.data;
       }
-      setAuth({ token: response.data.data.accessToken })
-      return response.data
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }

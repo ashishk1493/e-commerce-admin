@@ -20,6 +20,8 @@ import { PAnotifyError, PAnotifySuccess } from 'src/utils/tostMessage';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
+import { useRouter } from 'next/router';
+import { getAuth } from 'services/identity.service';
 
 // ----------------------------------------------------------------------
 
@@ -43,18 +45,28 @@ HomePage.getLayout = function getLayout(page) {
 
 export default function HomePage() {
   const { objUserDetails } = useSelector((state) => state.user);
+
+  const router = useRouter();
+  const auth = getAuth();
+
   useEffect(() => {
-    if (objUserDetails) {
-      if (objUserDetails.success == "true") {
-        PAnotifySuccess(objUserDetails.message)
-      } else if (objUserDetails.success == "false") {
-        PAnotifyError(objUserDetails.message)
-      }
+    if (auth) {
+      router.push('/product/productList');
+      // if (objUserDetails) {
+      //   if (objUserDetails.success == 'true') {
+      //     PAnotifySuccess(objUserDetails.message);
+      //   } else if (objUserDetails.success == 'false') {
+      //     PAnotifyError(objUserDetails.message);
+      //   }
+      // }
+    } else {
+      router.push('/auth/login');
     }
-  }, [objUserDetails])
+  }, []);
+
   return (
     <Page title="The starting point for your next project">
-      <RootStyle>
+      {/* <RootStyle>
         <HomeHero />
         <ContentStyle>
           <HomeMinimal />
@@ -73,7 +85,7 @@ export default function HomePage() {
 
           <HomeAdvertisement />
         </ContentStyle>
-      </RootStyle>
+      </RootStyle> */}
       <ToastContainer
         position="top-right"
         hideProgressBar={false}

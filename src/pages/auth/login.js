@@ -17,6 +17,8 @@ import Logo from '../../components/Logo';
 import Image from '../../components/Image';
 // sections
 import { LoginForm } from '../../sections/auth/login';
+import { getAuth } from 'services/identity.service';
+import { useEffect } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -70,6 +72,14 @@ export default function Login() {
 
   const mdUp = useResponsive('up', 'md');
 
+  const auth = getAuth();
+
+  useEffect(() => {
+    if (auth) {
+      router.push('/product/productList');
+    }
+  }, [auth]);
+
   return (
     <GuestGuard>
       <Page title="Login">
@@ -122,9 +132,9 @@ export default function Login() {
                 </Tooltip>
               </Stack>
 
-              <Alert severity="info" sx={{ mb: 3 }}>
+              {/* <Alert severity="info" sx={{ mb: 3 }}>
                 Use email : <strong>demo@minimals.cc</strong> / password :<strong> demo1234</strong>
-              </Alert>
+              </Alert> */}
 
               <LoginForm />
 

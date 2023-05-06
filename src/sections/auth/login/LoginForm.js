@@ -23,6 +23,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // import first
 import { useSelector } from 'react-redux';
 import { PAnotifyError } from 'src/utils/tostMessage';
+import { getAuth } from 'services/identity.service';
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
@@ -71,7 +72,13 @@ export default function LoginForm() {
 
   const onSubmit = async (data) => {
     try {
-      let res = await dispatch(login_user_slice({ email: data.email, password: data.password }))
+      let res = await dispatch(login_user_slice({ email: data.email, password: data.password }));
+      console.log(res, 'resres-');
+      if (res.success == 'true') {
+        push('/product/productList/');
+      } else {
+        PAnotifyError(res.message);
+      }
     } catch (error) {
       console.error(error);
       reset();
@@ -81,16 +88,20 @@ export default function LoginForm() {
     }
   };
 
-  useEffect(() => {
-    if (objUserDetails) {
-      if (objUserDetails.success == "true") {
-        push('/product/productList/');
-      } else if (objUserDetails.success == "false") {
-        console.log("objUserDetails.success");
-        PAnotifyError(objUserDetails.message)
-      }
-    }
-  }, [objUserDetails])
+  const auth = getAuth();
+
+  // useEffect(() => {
+  //   if (auth) {
+  //     if (objUserDetails) {
+  //       if (objUserDetails.success == 'true') {
+  //         push('/product/productList/');
+  //       } else if (objUserDetails.success == 'false') {
+  //         console.log('objUserDetails.success');
+  //         PAnotifyError(objUserDetails.message);
+  //       }
+  //     }
+  //   }
+  // }, [objUserDetails]);
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
